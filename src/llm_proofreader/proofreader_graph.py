@@ -91,11 +91,11 @@ class InputState(BaseModel):
         examples=["borges", "perrow", "scott", "bowker", "hochschild", "suchman", "polanyi"],
     )
     model: str = Field(
-        default="openrouter:google/gemini-2.5-pro",
+        default="google/gemini-2.5-pro",
         title="Model",
-        description="OpenRouter model id (langchain-openai routed to OpenRouter). Default: openrouter:google/gemini-2.5-pro",
+        description="OpenRouter model id (langchain-openai routed to OpenRouter). Default: google/gemini-2.5-pro",
         examples=[
-            "openrouter:google/gemini-2.5-pro",
+            "google/gemini-2.5-pro",
             "openrouter:anthropic/claude-sonnet-4.5",
             "openrouter:openai/gpt-4o",
         ],
@@ -127,7 +127,7 @@ class GraphState(BaseModel):
     # User inputs
     input_path: str = Field(..., description="Path to markdown file")
     book_key: str = ""
-    model: str = "openrouter:google/gemini-2.5-pro"
+    model: str = "google/gemini-2.5-pro"
     timeout_per_chunk: int = 120
     max_chunks: int = 0
 

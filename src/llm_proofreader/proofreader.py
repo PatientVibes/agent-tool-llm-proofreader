@@ -99,8 +99,8 @@ def configure_langsmith(*args, **kwargs):
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-DEFAULT_MODEL = "openrouter:google/gemini-2.5-pro"
-VERIFIER_MODEL = "openrouter:google/gemini-2.5-pro"  # Can use a different model for verification
+DEFAULT_MODEL = "google/gemini-2.5-pro"
+VERIFIER_MODEL = "google/gemini-2.5-pro"  # Can use a different model for verification
 MAX_FIXES_PER_CHUNK = 15  # Guardrail: if model finds more, something's wrong
 MAX_RETRIES = 2
 
