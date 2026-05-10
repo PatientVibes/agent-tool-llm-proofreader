@@ -1,0 +1,179 @@
+{
+  "false_positives": [
+    "McCleary",
+    "McCloskey",
+    "MacKenzie",
+    "McKeown",
+    "McGoogan",
+    "McFarland",
+    "McGraw",
+    "McDowell",
+    "MacDonald",
+    "DeKlerk",
+    "McDougall",
+    "MacArthur",
+    "DeVault",
+    "DeCoster",
+    "McCready",
+    "McDermot",
+    "McDermott",
+    "McCarthy",
+    "MacMillan",
+    "McGrath",
+    "McCann",
+    "MacFadden",
+    "DeLisser",
+    "DiMatteo",
+    "McKim",
+    "MacKay",
+    "McCorduck",
+    "McCalman",
+    "McCoy",
+    "McNamara",
+    "McNally",
+    "LeRoi",
+    "MacLean",
+    "LaFollette",
+    "McHenry",
+    "DeBray",
+    "McHale",
+    "McDonnell",
+    "McPherson",
+    "McKinley",
+    "McCaffrey",
+    "McKay",
+    "McMillan",
+    "McLean",
+    "McPhearson",
+    "LaPorte",
+    "LaGuardia",
+    "LaRoche",
+    "DuPont",
+    "duPont",
+    "DeSirey",
+    "BjeTknes",
+    "Bjerknes",
+    "JoAnne",
+    "joAnne",
+    "BasicBooks",
+    "HarperCollinsPublishers",
+    "McGraw-Hill",
+    "Hoffman-LaRoche",
+    "BioScience",
+    "MotherJones",
+    "FemaleMan-Meets-OncoMouse",
+    "FemaleMan",
+    "OncoMouse",
+    "iPhone",
+    "iPad",
+    "iMac",
+    "eBook",
+    "eBay",
+    "PhDs",
+    "PhD",
+    "deKleer",
+    "JavaScript",
+    "TypeScript",
+    "GitHub",
+    "YouTube"
+  ],
+  "known_corrections": {
+    "SeeingLike": "Seeing Like",
+    "vVould": "Would",
+    "vVhen": "When",
+    "vVe": "We",
+    "satisfY": "satisfy",
+    "classifY": "classify",
+    "classifYing": "classifying",
+    "identifYing": "identifying",
+    "classifiCation": "classification",
+    "telL": "tell",
+    "alL": "all",
+    "hospitaL": "hospital",
+    "1 997": "1997",
+    "1 850": "1850",
+    "1 900": "1900",
+    "M IT": "MIT",
+    "I nstitute": "Institute"
+  },
+  "book_specific": {
+    "perrow": {
+      "technical_abbreviations": [
+        "NucP",
+        "Weap",
+        "Chem",
+        "Airw",
+        "Mar",
+        "Mine",
+        "Space",
+        "Dam",
+        "Fly",
+        "DNA",
+        "ASD",
+        "PORV",
+        "HPI",
+        "TMI",
+        "NRC"
+      ],
+      "proper_nouns": [
+        "Babcock",
+        "Wilcox",
+        "Kemeny",
+        "Three Mile Island"
+      ]
+    },
+    "scott": {
+      "technical_terms": [
+        "metis",
+        "métis",
+        "high modernism",
+        "legibility"
+      ],
+      "proper_nouns": [
+        "Tololyan",
+        "Rothamsted",
+        "Brasilia",
+        "Chandigarh"
+      ]
+    },
+    "bowker": {
+      "technical_terms": [
+        "ICD",
+        "NIC",
+        "NOC",
+        "boundary object",
+        "classification"
+      ]
+    },
+    "hochschild": {
+      "technical_terms": [
+        "emotional labor",
+        "emotion work",
+        "feeling rules",
+        "surface acting",
+        "deep acting"
+      ]
+    },
+    "suchman": {
+      "technical_terms": [
+        "situated action",
+        "plan",
+        "repair"
+      ],
+      "proper_nouns": [
+        "Xerox",
+        "PARC",
+        "Garfinkel",
+        "Oberquelle"
+      ]
+    },
+    "polanyi": {
+      "technical_terms": [
+        "tacit knowledge",
+        "focal awareness",
+        "subsidiary awareness",
+        "indwelling"
+      ]
+    }
+  }
+}

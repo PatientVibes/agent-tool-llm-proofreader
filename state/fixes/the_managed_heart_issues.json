@@ -1,0 +1,252 @@
+[
+  {
+    "line": 538,
+    "col": 324,
+    "category": "ocr_artifact",
+    "description": "Stray capital letter in word",
+    "context": "ht of as our selE We come to dist",
+    "original": "lE ",
+    "proposed": "l ",
+    "confidence": "low"
+  },
+  {
+    "line": 2008,
+    "col": 31,
+    "category": "joined_words",
+    "description": "Missing space between words: \"DeVault\"",
+    "context": "Marjorie DeVault have e",
+    "original": "eVa",
+    "proposed": "e Va",
+    "confidence": "medium"
+  },
+  {
+    "line": 2082,
+    "col": 249,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McDougall\"",
+    "context": "atives), McDougall his ",
+    "original": "cDo",
+    "proposed": "c Do",
+    "confidence": "medium"
+  },
+  {
+    "line": 2104,
+    "col": 16,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McDouga11(1937,\"",
+    "context": "\\*</sup> McDouga11(1937",
+    "original": "cDo",
+    "proposed": "c Do",
+    "confidence": "medium"
+  },
+  {
+    "line": 2629,
+    "col": 231,
+    "category": "joined_words",
+    "description": "Missing space between words: \"doctorSexpectations.\"",
+    "context": " the doctorSexpectation",
+    "original": "rSe",
+    "proposed": "r Se",
+    "confidence": "medium"
+  },
+  {
+    "line": 2687,
+    "col": 1139,
+    "category": "joined_words",
+    "description": "Missing space between words: \"MacArthur\"",
+    "context": "(1965), MacArthur (1967",
+    "original": "cAr",
+    "proposed": "c Ar",
+    "confidence": "medium"
+  },
+  {
+    "line": 2801,
+    "col": 2,
+    "category": "joined_words",
+    "description": "Missing space between words: \"DeCoster,\"",
+    "context": "DeCoster, V.A.",
+    "original": "eCo",
+    "proposed": "e Co",
+    "confidence": "medium"
+  },
+  {
+    "line": 2805,
+    "col": 2,
+    "category": "joined_words",
+    "description": "Missing space between words: \"DeCoster,\"",
+    "context": "DeCoster, V.A.",
+    "original": "eCo",
+    "proposed": "e Co",
+    "confidence": "medium"
+  },
+  {
+    "line": 2809,
+    "col": 2,
+    "category": "joined_words",
+    "description": "Missing space between words: \"DeVault,\"",
+    "context": "DeVault, Marjo",
+    "original": "eVa",
+    "proposed": "e Va",
+    "confidence": "medium"
+  },
+  {
+    "line": 2823,
+    "col": 87,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McCready\"",
+    "context": "and Lori McCready Megda",
+    "original": "cCr",
+    "proposed": "c Cr",
+    "confidence": "medium"
+  },
+  {
+    "line": 2841,
+    "col": 85,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McDermot\"",
+    "context": "Patricia McDermot (eds.",
+    "original": "cDe",
+    "proposed": "c De",
+    "confidence": "medium"
+  },
+  {
+    "line": 2874,
+    "col": 61,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McCarthy\"",
+    "context": "br>Doyle McCarthy (eds.",
+    "original": "cCa",
+    "proposed": "c Ca",
+    "confidence": "medium"
+  },
+  {
+    "line": 2877,
+    "col": 224,
+    "category": "joined_words",
+    "description": "Missing space between words: \"MacMillan\"",
+    "context": ">tives, MacMillan Publi",
+    "original": "cMi",
+    "proposed": "c Mi",
+    "confidence": "medium"
+  },
+  {
+    "line": 2915,
+    "col": 18,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McGrath,\"",
+    "context": ", J., S. McGrath, M. Kl",
+    "original": "cGr",
+    "proposed": "c Gr",
+    "confidence": "medium"
+  },
+  {
+    "line": 3208,
+    "col": 62,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McGraw-Hill.\"",
+    "context": "ew York: McGraw-Hill.",
+    "original": "cGr",
+    "proposed": "c Gr",
+    "confidence": "medium"
+  },
+  {
+    "line": 3792,
+    "col": 62,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McGraw-Hill.\"",
+    "context": "ew York: McGraw-Hill.",
+    "original": "cGr",
+    "proposed": "c Gr",
+    "confidence": "medium"
+  },
+  {
+    "line": 3864,
+    "col": 40,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McCann\"",
+    "context": " Coward, McCann and Geo",
+    "original": "cCa",
+    "proposed": "c Ca",
+    "confidence": "medium"
+  },
+  {
+    "line": 3878,
+    "col": 3,
+    "category": "joined_words",
+    "description": "Missing space between words: \"MacArthur,\"",
+    "context": "MacArthur, R.",
+    "original": "cAr",
+    "proposed": "c Ar",
+    "confidence": "medium"
+  },
+  {
+    "line": 3928,
+    "col": 7,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McDougall,\"",
+    "context": "#### McDougall, W.",
+    "original": "cDo",
+    "proposed": "c Do",
+    "confidence": "medium"
+  },
+  {
+    "line": 4020,
+    "col": 65,
+    "category": "joined_words",
+    "description": "Missing space between words: \"DeLisser\"",
+    "context": "d Oswald DeLisser",
+    "original": "eLi",
+    "proposed": "e Li",
+    "confidence": "medium"
+  },
+  {
+    "line": 4042,
+    "col": 37,
+    "category": "joined_words",
+    "description": "Missing space between words: \"MacFadden\"",
+    "context": "w York: MacFadden Books",
+    "original": "cFa",
+    "proposed": "c Fa",
+    "confidence": "medium"
+  },
+  {
+    "line": 4064,
+    "col": 66,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McGraw-Hill.\"",
+    "context": "ew York: McGraw-Hill.",
+    "original": "cGr",
+    "proposed": "c Gr",
+    "confidence": "medium"
+  },
+  {
+    "line": 4088,
+    "col": 36,
+    "category": "joined_words",
+    "description": "Missing space between words: \"DiMatteo,\"",
+    "context": "l, Robin DiMatteo, Pete",
+    "original": "iMa",
+    "proposed": "i Ma",
+    "confidence": "medium"
+  },
+  {
+    "line": 4489,
+    "col": 3,
+    "category": "joined_words",
+    "description": "Missing space between words: \"MacArthur,\"",
+    "context": "MacArthur, R., ",
+    "original": "cAr",
+    "proposed": "c Ar",
+    "confidence": "medium"
+  },
+  {
+    "line": 4491,
+    "col": 626,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McDougall,\"",
+    "context": " 182-183 McDougall, W.,",
+    "original": "cDo",
+    "proposed": "c Do",
+    "confidence": "medium"
+  }
+]

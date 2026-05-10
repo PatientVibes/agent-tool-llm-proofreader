@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+*.egg-info/
+dist/
+build/
+.venv/
+.pytest_cache/
+
+# Local user state — should live under platformdirs, but if devs put it here
+.proofreader_state/
+.proofreader_graph_state/

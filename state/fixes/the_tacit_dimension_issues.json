@@ -1,0 +1,22 @@
+[
+  {
+    "line": 727,
+    "col": 26,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McCleary,\"",
+    "context": " S., and McCleary, R. A",
+    "original": "cCl",
+    "proposed": "c Cl",
+    "confidence": "medium"
+  },
+  {
+    "line": 727,
+    "col": 454,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McCleary,\"",
+    "context": "arus and McCleary, and ",
+    "original": "cCl",
+    "proposed": "c Cl",
+    "confidence": "medium"
+  }
+]

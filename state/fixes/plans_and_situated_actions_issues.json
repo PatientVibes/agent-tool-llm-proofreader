@@ -1,0 +1,242 @@
+[
+  {
+    "line": 22,
+    "col": 1,
+    "category": "front_matter",
+    "description": "Front matter noise: All [Rr]ights [Rr]eserved",
+    "context": "Copyright Lucy A. Such man 1985. All rights reserved.",
+    "original": "Copyright Lucy A. Such man 1985. All rights reserved.",
+    "proposed": "",
+    "confidence": "medium"
+  },
+  {
+    "line": 38,
+    "col": 909,
+    "category": "joined_words",
+    "description": "Missing space between words: \"JuHan\"",
+    "context": "ecentl,y JuHan Orr are ",
+    "original": "uHa",
+    "proposed": "u Ha",
+    "confidence": "medium"
+  },
+  {
+    "line": 47,
+    "col": 33,
+    "category": "ocr_artifact",
+    "description": "Stray capital letter in word",
+    "context": "RACfIVE ARTIFACfS       |  | 7   ",
+    "original": "fS ",
+    "proposed": "f ",
+    "confidence": "low"
+  },
+  {
+    "line": 137,
+    "col": 2362,
+    "category": "joined_words",
+    "description": "Missing space between words: \"MacKay\"",
+    "context": "ld (cf. MacKay 1962).",
+    "original": "cKa",
+    "proposed": "c Ka",
+    "confidence": "medium"
+  },
+  {
+    "line": 153,
+    "col": 138,
+    "category": "joined_words",
+    "description": "Missing space between words: \"(OberqueUe\"",
+    "context": "es (OberqueUe *et ai,* ",
+    "original": "eUe",
+    "proposed": "e Ue",
+    "confidence": "medium"
+  },
+  {
+    "line": 163,
+    "col": 34,
+    "category": "joined_words",
+    "description": "Missing space between words: \"etTort10\"",
+    "context": " such an etTort10 A bas",
+    "original": "tTo",
+    "proposed": "t To",
+    "confidence": "medium"
+  },
+  {
+    "line": 165,
+    "col": 183,
+    "category": "joined_words",
+    "description": "Missing space between words: \"etTect\"",
+    "context": "s to the etTect that th",
+    "original": "tTe",
+    "proposed": "t Te",
+    "confidence": "medium"
+  },
+  {
+    "line": 217,
+    "col": 367,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McCorduck,\"",
+    "context": "cited in McCorduck, 197",
+    "original": "cCo",
+    "proposed": "c Co",
+    "confidence": "medium"
+  },
+  {
+    "line": 381,
+    "col": 42,
+    "category": "joined_words",
+    "description": "Missing space between words: \"McDermott\"",
+    "context": "her (Ray McDermott 1976",
+    "original": "cDe",
+    "proposed": "c De",
+    "confidence": "medium"
+  },
+  {
+    "line": 531,
+    "col": 4,
+    "category": "joined_words",
+    "description": "Missing space between words: \"tIk.\"",
+    "context": "C: tIk. Be:cuz h",
+    "original": "tIk",
+    "proposed": "t Ik",
+    "confidence": "medium"
+  },
+  {
+    "line": 655,
+    "col": 19,
+    "category": "joined_words",
+    "description": "Missing space between words: \"wrestIing\"",
+    "context": "was a wrestIing .. two ",
+    "original": "tIi",
+    "proposed": "t Ii",
+    "confidence": "medium"
+  },
+  {
+    "line": 680,
+    "col": 14,
+    "category": "joined_words",
+    "description": "Missing space between words: \"iExpert\"",
+    "context": "# 6.1 The iExpert Help ",
+    "original": "iEx",
+    "proposed": "i Ex",
+    "confidence": "medium"
+  },
+  {
+    "line": 797,
+    "col": 88,
+    "category": "joined_words",
+    "description": "Missing space between words: \"baSis\"",
+    "context": "bout the baSis for huma",
+    "original": "aSi",
+    "proposed": "a Si",
+    "confidence": "medium"
+  },
+  {
+    "line": 894,
+    "col": 43,
+    "category": "joined_words",
+    "description": "Missing space between words: \"CopiesMade)\"",
+    "context": "Sets CopiesMade) Requir",
+    "original": "sMa",
+    "proposed": "s Ma",
+    "confidence": "medium"
+  },
+  {
+    "line": 1724,
+    "col": 17,
+    "category": "ocr_artifact",
+    "description": "Stray capital letter in word",
+    "context": "### [Joshi, et aI, 1981]",
+    "original": "aI,",
+    "proposed": "a,",
+    "confidence": "low"
+  },
+  {
+    "line": 1732,
+    "col": 13,
+    "category": "ocr_artifact",
+    "description": "Stray capital letter in word",
+    "context": "[Miller, et aI, 1960J",
+    "original": "aI,",
+    "proposed": "a,",
+    "confidence": "low"
+  },
+  {
+    "line": 1748,
+    "col": 17,
+    "category": "ocr_artifact",
+    "description": "Stray capital letter in word",
+    "context": "Oberquelle, et aI, 1983J",
+    "original": "aI,",
+    "proposed": "a,",
+    "confidence": "low"
+  },
+  {
+    "line": 1758,
+    "col": 81,
+    "category": "joined_words",
+    "description": "Missing space between words: \"gWhat\"",
+    "context": " Dreyfus' gWhat Compute",
+    "original": "gWh",
+    "proposed": "g Wh",
+    "confidence": "medium"
+  },
+  {
+    "line": 1810,
+    "col": 19,
+    "category": "ocr_artifact",
+    "description": "Stray capital letter in word",
+    "context": "# [Schmidt, et aI, 1978]",
+    "original": "aI,",
+    "proposed": "a,",
+    "confidence": "low"
+  },
+  {
+    "line": 1956,
+    "col": 1,
+    "category": "duplicate_heading",
+    "description": "Duplicate heading (first seen line 1936)",
+    "context": "# **OVERVIEW:**",
+    "original": "# **OVERVIEW:**",
+    "proposed": "<!-- REMOVED DUPLICATE: # **OVERVIEW:** -->",
+    "confidence": "high"
+  },
+  {
+    "line": 1962,
+    "col": 1,
+    "category": "duplicate_heading",
+    "description": "Duplicate heading (first seen line 1940)",
+    "context": "# **INSTRUCTION:**",
+    "original": "# **INSTRUCTION:**",
+    "proposed": "<!-- REMOVED DUPLICATE: # **INSTRUCTION:** -->",
+    "confidence": "high"
+  },
+  {
+    "line": 1969,
+    "col": 1,
+    "category": "duplicate_heading",
+    "description": "Duplicate heading (first seen line 1936)",
+    "context": "# **OVERVIEW:**",
+    "original": "# **OVERVIEW:**",
+    "proposed": "<!-- REMOVED DUPLICATE: # **OVERVIEW:** -->",
+    "confidence": "high"
+  },
+  {
+    "line": 1983,
+    "col": 1,
+    "category": "duplicate_heading",
+    "description": "Duplicate heading (first seen line 1973)",
+    "context": "# **ASSUMPTIONS:**",
+    "original": "# **ASSUMPTIONS:**",
+    "proposed": "<!-- REMOVED DUPLICATE: # **ASSUMPTIONS:** -->",
+    "confidence": "high"
+  },
+  {
+    "line": 1991,
+    "col": 1,
+    "category": "duplicate_heading",
+    "description": "Duplicate heading (first seen line 1940)",
+    "context": "# INSTRUCTION:",
+    "original": "# INSTRUCTION:",
+    "proposed": "<!-- REMOVED DUPLICATE: # INSTRUCTION: -->",
+    "confidence": "high"
+  }
+]
