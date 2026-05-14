@@ -984,10 +984,26 @@ def show_status(input_path):
 # ─── CLI ─────────────────────────────────────────────────────────────────────
 
 def _load_env_file_if_present():
-    """Source ~/.config/agent-tool-llm-proofreader/env if OPENROUTER_API_KEY isn't set.
+    """Load ~/.config/agent-tool-llm-proofreader/env into os.environ if OPENROUTER_API_KEY is unset.
 
-    Mirrors a minimal `source <file>` for `KEY=value` and `export KEY=value` lines.
+    Minimal env-file reader for `KEY=value` and `export KEY=value` lines. Handles
+    a single pair of surrounding quotes, full-line `#` comments, and blank lines.
+    This is NOT a `source <file>` replacement — inline comments, interpolation,
+    multi-line values, and duplicate-key last-wins are unsupported.
+
+    Invariants:
+      - No-op if OPENROUTER_API_KEY is already set OR the file doesn't exist.
+      - Pre-existing env vars are NEVER overwritten (shell-exported values
+        always win, for ALL keys — not just OPENROUTER_API_KEY).
+      - **First-wins within the file** for duplicate keys.
+      - Bad lines are silently skipped. Downstream KeyError on the missing key
+        is the actionable error.
+
     Migration note (2026-05-09): replaces the old load_secrets / .env pattern.
+    Bug-fix backport 2026-05-14: previously overwrote pre-set non-required env
+    vars and stripped all chained quote chars; now no-clobber for all keys and
+    strips ONE matching pair. See PatientVibes/agent-skills#1 for the canonical
+    loader documented in the config-env-loading skill.
     """
     from pathlib import Path
     if os.environ.get("OPENROUTER_API_KEY"):
@@ -1001,10 +1017,25 @@ def _load_env_file_if_present():
             continue
         if line.startswith("export "):
             line = line[len("export "):]
-        if "=" in line:
-            k, _, v = line.partition("=")
-            v = v.strip().strip("'").strip('"')
-            os.environ[k.strip()] = v
+        if "=" not in line:
+            continue
+        k, _, v = line.partition("=")
+        k = k.strip()
+        # POSIX env-var name: [A-Za-z_][A-Za-z0-9_]*. Skip anything else
+        # (catches lines like `MY KEY=value` that would otherwise set a
+        # space-containing name unusable by subprocesses).
+        if not k or not (k[0].isalpha() or k[0] == "_") or not all(
+            c.isalnum() or c == "_" for c in k
+        ):
+            continue
+        if k in os.environ:
+            # Don't clobber pre-set env vars — caller's shell wins.
+            continue
+        v = v.strip()
+        # Strip ONE pair of matching surrounding quotes (not all of them).
+        if len(v) >= 2 and v[0] == v[-1] and v[0] in ("'", '"'):
+            v = v[1:-1]
+        os.environ[k] = v
 
 
 def main():
