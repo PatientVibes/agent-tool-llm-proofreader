@@ -4,9 +4,10 @@ requires-python = ">=3.11"
 
 [[package]]
 name = "agent-tool-llm-proofreader"
-version = "0.1.1"
+version = "0.2.0"
 source = { editable = "." }
 dependencies = [
+    { name = "agent-tool-token-tracker" },
     { name = "langchain-core" },
     { name = "langchain-openai" },
     { name = "langgraph" },
@@ -25,6 +26,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "agent-tool-token-tracker", git = "https://github.com/PatientVibes/agent-tool-token-tracker.git?rev=d16943fdb0516f386ac798e1527526775ef52af1" },
     { name = "langchain-core", specifier = ">=0.3,<1" },
     { name = "langchain-openai", specifier = ">=0.2,<1" },
     { name = "langgraph", specifier = ">=0.2,<1" },
@@ -38,6 +40,14 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=8,<9" }]
+
+[[package]]
+name = "agent-tool-token-tracker"
+version = "0.1.0"
+source = { git = "https://github.com/PatientVibes/agent-tool-token-tracker.git?rev=d16943fdb0516f386ac798e1527526775ef52af1#d16943fdb0516f386ac798e1527526775ef52af1" }
+dependencies = [
+    { name = "pydantic" },
+]
 
 [[package]]
 name = "aiosqlite"

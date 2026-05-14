@@ -61,14 +61,12 @@ from llm_proofreader.proofreader import (
     verify_fixes,
     preprocess_deterministic,
     load_known_patterns,
-    extract_ollama_metrics,
-    extract_openrouter_metrics,
-    format_metrics,
+    PRICING,
     ProofreadState,
     DEFAULT_MODEL,
     MAX_RETRIES,
 )
-from llm_proofreader import proofreader as _lp
+from token_tracker import TokenTracker
 
 
 # ─── Graph State ─────────────────────────────────────────────────────────────
@@ -150,8 +148,10 @@ class GraphState(BaseModel):
     chunk_fixes: list = Field(default_factory=list)
     skip_reason: str = ""
 
-    # Per-call LLM timing metrics (eval_count, eval_duration → tok/s)
-    llm_metrics: list = Field(default_factory=list)
+    # Per-source LLM usage tracker (TokenTracker instance). Stored on state so each
+    # node can record_from_response into the same tracker. Excluded from pydantic
+    # serialization via arbitrary_types_allowed.
+    tracker: Optional[TokenTracker] = None
 
     model_config = {"arbitrary_types_allowed": True}
 
@@ -203,6 +203,7 @@ def initialize(state: GraphState) -> dict:
         'session_patterns': {'error_types_seen': {}},
         'known_patterns': known_patterns,
         'book_config': book_config,
+        'tracker': TokenTracker(),
     }
 
 
@@ -277,15 +278,10 @@ def detect_fixes(state: GraphState) -> dict:
 
     timeout = (state.timeout_per_chunk if state.timeout_per_chunk else 120)
     response = None
-    detect_elapsed = None
 
     def invoke_with_result(container):
-        # Migrated 2026-05-09: capture wall-clock around invoke() since OpenRouter
-        # doesn't expose Ollama-style server timings.
         try:
-            _t0 = time.perf_counter()
             container['response'] = llm.invoke(messages)
-            container['elapsed'] = time.perf_counter() - _t0
         except Exception as e:
             container['error'] = e
 
@@ -309,31 +305,32 @@ def detect_fixes(state: GraphState) -> dict:
 
         response = container.get('response')
         if response:
-            detect_elapsed = container.get('elapsed')
             break
 
     if response is None:
         return {'chunk_fixes': []}
+
+    # Record token usage with source="detect" (graph variant label).
+    model_id = state.model if state.model else DEFAULT_MODEL
+    if state.tracker is not None:
+        state.tracker.record_from_response(
+            source="detect", model=model_id, raw_response=response
+        )
+        events = state.tracker.events()
+        if events:
+            last = events[-1]
+            print(
+                f"  metrics: [{last.model}] "
+                f"input {last.input_tokens}tok, "
+                f"output {last.output_tokens}tok"
+            )
 
     content = response.content if hasattr(response, 'content') else ""
     fixes = _parse_fixes(content, idx + 1)
     if fixes:
         print(f"  → {len(fixes)} potential fixes found")
 
-    new_metrics = []
-    detect_m = extract_openrouter_metrics(
-        response,
-        label=f"detect/chunk{idx+1}",
-        elapsed_seconds=detect_elapsed,
-    )
-    if detect_m:
-        print(f"  metrics: {format_metrics(detect_m)}")
-        new_metrics.append(detect_m)
-
-    return {
-        'chunk_fixes': fixes,
-        'llm_metrics': state.llm_metrics + new_metrics,
-    }
+    return {'chunk_fixes': fixes}
 
 
 def guardrail_filter(state: GraphState) -> dict:
@@ -352,10 +349,7 @@ def verify(state: GraphState) -> dict:
         return {}
 
     print(f"  → Verifying {len(fixes)} fixes...")
-    _lp._LAST_CALL_METRICS.clear()
-    verified = verify_fixes(fixes, state.chunk_text)
-    drained = list(_lp._LAST_CALL_METRICS)
-    _lp._LAST_CALL_METRICS.clear()
+    verified = verify_fixes(fixes, state.chunk_text, tracker=state.tracker)
 
     confirmed = [f for f in verified if f.get('status') == 'confirmed']
     rejected = [f for f in verified if f.get('status') == 'rejected']
@@ -373,7 +367,6 @@ def verify(state: GraphState) -> dict:
         'fixes_found': state.fixes_found + confirmed,
         'fixes_rejected': state.fixes_rejected + rejected,
         'session_patterns': patterns,
-        'llm_metrics': state.llm_metrics + drained,
     }
 
 
@@ -410,43 +403,28 @@ def apply_all_fixes(state: GraphState) -> dict:
     print(f"Rejected: {len(state.fixes_rejected)}")
     print(f"Output:   {state.input_path}")
 
-    # LLM timing summary
-    # Migrated 2026-05-09: switched to OpenRouter token counts (input_tokens /
-    # output_tokens / total_tokens) plus caller-supplied wall-clock elapsed_seconds.
-    # The old Ollama-only tok/s rate is recomputed from elapsed when available.
-    metrics = state.llm_metrics
-    if metrics:
-        total_output_tokens = sum(m.get('output_tokens', 0) for m in metrics)
-        total_input_tokens = sum(m.get('input_tokens', 0) for m in metrics)
-        total_wall = sum(m.get('elapsed_seconds') or 0 for m in metrics)
-        avg_tok_s = (total_output_tokens / total_wall) if total_wall else 0
-        by_label = {}
-        for m in metrics:
-            bucket = m['label'].split('/')[0]
-            by_label.setdefault(bucket, []).append(m)
+    # Token usage + cost estimate summary (via TokenTracker)
+    tracker = state.tracker
+    if tracker is not None:
+        totals = tracker.totals()
+        if totals:
+            print(f"\n{'='*60}")
+            print("Token usage")
+            print(f"{'='*60}")
+            for source, stats in totals.items():
+                print(
+                    f"  {source:12s}: {stats['calls']:4d} calls, "
+                    f"input {stats['input_tokens']:8d}tok, "
+                    f"output {stats['output_tokens']:8d}tok"
+                )
 
-        print(f"\nLLM timing ({len(metrics)} calls):")
-        print(f"  input tokens:  {total_input_tokens}")
-        print(f"  output tokens: {total_output_tokens}")
-        print(f"  avg gen speed: {avg_tok_s:.1f} tok/s")
-        print(f"  wall time:     {total_wall:.1f}s")
-        for label, items in by_label.items():
-            g = sum(x.get('output_tokens', 0) for x in items)
-            s = sum((x.get('elapsed_seconds') or 0) for x in items)
-            rate = g / s if s else 0
-            print(f"    {label}: {len(items)} calls, {g} gen tok, {rate:.1f} tok/s avg")
-
-        # Persist as JSONL for later analysis
-        # Migrated 2026-05-09: state moved out of __file__-relative path.
-        from llm_proofreader.state_paths import graph_checkpoint_dir
-        metrics_dir = graph_checkpoint_dir()
-        metrics_dir.mkdir(exist_ok=True)
-        file_hash = hashlib.md5(state.input_path.encode()).hexdigest()[:12]
-        metrics_path = metrics_dir / f"metrics_{file_hash}.jsonl"
-        with open(metrics_path, 'w', encoding='utf-8') as f:
-            for m in metrics:
-                f.write(json.dumps(m) + "\n")
-        print(f"  saved: {metrics_path}")
+            cost = tracker.cost_estimate(PRICING)
+            print(f"\nCost estimate (USD): ${cost['total_usd']:.4f}")
+            print(f"  input:  ${cost['input_usd']:.4f}")
+            print(f"  output: ${cost['output_usd']:.4f}")
+            unpriced = sorted({ev.model for ev in tracker.events() if ev.model not in PRICING})
+            if unpriced:
+                print(f"  (no price configured for: {', '.join(unpriced)})")
 
     print(f"{'='*60}\n")
 

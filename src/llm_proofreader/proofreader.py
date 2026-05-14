@@ -39,60 +39,13 @@ if not isinstance(sys.stdout, io.TextIOWrapper) or sys.stdout.encoding != 'utf-8
 from langchain_openai import ChatOpenAI as ChatOllama  # noqa: N814 (alias preserves call sites)
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, ToolMessage
 from langchain_core.tools import tool
+from token_tracker import TokenTracker
 
 
 # POSIX env-var name: [A-Za-z_][A-Za-z0-9_]*. ASCII-only — see PR #1
 # follow-up for the Unicode-vs-ASCII fix.
 _POSIX_ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
-
-def extract_openrouter_metrics(response, label="", elapsed_seconds=None):
-    """Pull token counts from a langchain-openai response (used via OpenRouter).
-
-    OpenRouter / OpenAI-compatible endpoints expose ``response.usage_metadata`` with
-    ``input_tokens``, ``output_tokens``, ``total_tokens`` (langchain-core normalises
-    OpenAI's ``prompt_tokens``/``completion_tokens`` into this shape). They do NOT
-    expose Ollama-style server-side timing, so wall-clock duration is caller-supplied
-    via ``elapsed_seconds`` (measured around ``llm.invoke(...)`` with ``time.perf_counter``).
-
-    Returns a dict with: label, model, input_tokens, output_tokens, total_tokens,
-    elapsed_seconds. Returns ``None`` if usage metadata is missing.
-    """
-    usage = getattr(response, 'usage_metadata', None)
-    if not usage:
-        return None
-    meta = getattr(response, 'response_metadata', None) or {}
-    return {
-        'label': label,
-        'model': meta.get('model_name') or meta.get('model', ''),
-        'input_tokens': usage.get('input_tokens', 0),
-        'output_tokens': usage.get('output_tokens', 0),
-        'total_tokens': usage.get('total_tokens', 0),
-        'elapsed_seconds': elapsed_seconds,
-    }
-
-
-# Backward-compatible alias for any internal call sites (and proofreader_graph.py
-# which imports the old name from this module).
-extract_ollama_metrics = extract_openrouter_metrics
-
-
-_LAST_CALL_METRICS = []  # module-level sink: callers drain after each call batch
-
-
-def format_metrics(m):
-    """One-line summary of extract_openrouter_metrics output."""
-    if not m:
-        return "(no metrics)"
-    elapsed = m.get('elapsed_seconds')
-    elapsed_part = f", {elapsed:.1f}s" if elapsed is not None else ""
-    return (
-        f"[{m.get('model', '')}] "
-        f"input {m.get('input_tokens', 0)}tok, "
-        f"output {m.get('output_tokens', 0)}tok, "
-        f"total {m.get('total_tokens', 0)}tok"
-        f"{elapsed_part}"
-    )
 
 # Migrated 2026-05-09: load_secrets replaced by per-tool env file pattern.
 # Set OPENROUTER_API_KEY in ~/.config/agent-tool-llm-proofreader/env (mode 600)
@@ -108,6 +61,12 @@ DEFAULT_MODEL = "google/gemini-2.5-pro"
 VERIFIER_MODEL = "google/gemini-2.5-pro"  # Can use a different model for verification
 MAX_FIXES_PER_CHUNK = 15  # Guardrail: if model finds more, something's wrong
 MAX_RETRIES = 2
+
+# OpenRouter pricing in USD per 1M tokens (input / output). Last updated 2026-05-14.
+# Unknown models contribute $0 to cost_estimate() — see CHANGELOG for the limitation.
+PRICING = {
+    "google/gemini-2.5-pro": {"input": 1.25, "output": 5.0},
+}
 
 # Migrated 2026-05-09: state files moved out of __file__-relative paths into
 # platformdirs.user_state_dir("agent-tool-llm-proofreader"). Override via the
@@ -545,11 +504,12 @@ def pre_analyze_chunk(chunk_text, known_patterns):
 
 
 def proofread_chunk_simple(llm, chunk_text, chunk_num, total_chunks, state, known_patterns,
-                            book_key=None, timeout_seconds=120):
+                            tracker=None, model=None, book_key=None, timeout_seconds=120):
     """Deterministic pre-analysis + single LLM call with per-chunk timeout.
 
     book_key: enables per-book vocabulary in system prompt
     timeout_seconds: hard cap on LLM call (default 2 min)
+    tracker / model: TokenTracker + model id for per-call usage recording.
     """
     system_prompt = build_system_prompt(state, known_patterns, book_key=book_key)
 
@@ -603,6 +563,19 @@ def proofread_chunk_simple(llm, chunk_text, chunk_num, total_chunks, state, know
         print(f"    No response for chunk {chunk_num}")
         return []
 
+    if tracker is not None:
+        tracker.record_from_response(
+            source="proofread", model=model, raw_response=response
+        )
+        events = tracker.events()
+        if events:
+            last = events[-1]
+            print(
+                f"    metrics: [{last.model}] "
+                f"input {last.input_tokens}tok, "
+                f"output {last.output_tokens}tok"
+            )
+
     content = response.content if hasattr(response, 'content') else ""
     return _parse_fixes(content, chunk_num)
 
@@ -635,7 +608,7 @@ def _parse_fixes(content, chunk_num):
 
 # ─── Verification Agent (Component 10 + 11) ─────────────────────────────────
 
-def verify_fixes(fixes, chunk_text, model=VERIFIER_MODEL):
+def verify_fixes(fixes, chunk_text, tracker=None, model=VERIFIER_MODEL):
     """Second agent reviews proposed fixes for correctness."""
     if not fixes:
         return []
@@ -676,15 +649,19 @@ Output a JSON array with the same fixes plus a "status" field ("confirmed" or "r
 """
 
     try:
-        # Migrated 2026-05-09: OpenRouter doesn't expose Ollama-style server timings,
-        # so measure wall-clock around invoke() and pass through to the metrics helper.
-        _t0 = time.perf_counter()
         response = verifier.invoke([HumanMessage(content=prompt)])
-        verify_elapsed = time.perf_counter() - _t0
-        m = extract_openrouter_metrics(response, label="verify", elapsed_seconds=verify_elapsed)
-        if m:
-            print(f"    metrics: {format_metrics(m)}")
-            _LAST_CALL_METRICS.append(m)
+        if tracker is not None:
+            tracker.record_from_response(
+                source="verify", model=model, raw_response=response
+            )
+            events = tracker.events()
+            if events:
+                last = events[-1]
+                print(
+                    f"    metrics: [{last.model}] "
+                    f"input {last.input_tokens}tok, "
+                    f"output {last.output_tokens}tok"
+                )
         content = response.content.strip()
 
         # Handle think tags
@@ -801,6 +778,8 @@ def run_proofreader(input_path, output_path=None, model=DEFAULT_MODEL, resume=Fa
     if not state:
         state = ProofreadState.fresh(input_path, model)
 
+    tracker = TokenTracker()
+
     state.status = "running"
 
     # Load content and known patterns
@@ -872,6 +851,7 @@ def run_proofreader(input_path, output_path=None, model=DEFAULT_MODEL, resume=Fa
         # Step 1: Deterministic pre-analysis + LLM proofreading
         fixes = proofread_chunk_simple(
             llm, chunk['text'], i+1, len(chunks), state, known_patterns,
+            tracker=tracker, model=model,
             book_key=book_key, timeout_seconds=timeout_per_chunk,
         )
 
@@ -884,7 +864,7 @@ def run_proofreader(input_path, output_path=None, model=DEFAULT_MODEL, resume=Fa
             # Step 3: Verification agent
             if fixes:
                 print(f"  → Verifying {len(fixes)} fixes...")
-                fixes = verify_fixes(fixes, chunk['text'])
+                fixes = verify_fixes(fixes, chunk['text'], tracker=tracker)
 
                 confirmed = [f for f in fixes if f.get('status') == 'confirmed']
                 rejected = [f for f in fixes if f.get('status') == 'rejected']
@@ -961,8 +941,31 @@ def run_proofreader(input_path, output_path=None, model=DEFAULT_MODEL, resume=Fa
             'fixes_applied': state.fixes_applied,
             'fixes_rejected': state.fixes_rejected,
             'session_patterns': state.session_patterns,
+            'token_usage': tracker.totals(),
+            'cost_estimate_usd': tracker.cost_estimate(PRICING),
         }, f, indent=2, ensure_ascii=False)
     print(f"Report:         {report_path}")
+    print(f"{'='*60}")
+
+    # Token usage + cost estimate summary
+    print(f"\n{'='*60}")
+    print("Token usage")
+    print(f"{'='*60}")
+    totals = tracker.totals()
+    for source, stats in totals.items():
+        print(
+            f"  {source:12s}: {stats['calls']:4d} calls, "
+            f"input {stats['input_tokens']:8d}tok, "
+            f"output {stats['output_tokens']:8d}tok"
+        )
+
+    cost = tracker.cost_estimate(PRICING)
+    print(f"\nCost estimate (USD): ${cost['total_usd']:.4f}")
+    print(f"  input:  ${cost['input_usd']:.4f}")
+    print(f"  output: ${cost['output_usd']:.4f}")
+    unpriced = sorted({ev.model for ev in tracker.events() if ev.model not in PRICING})
+    if unpriced:
+        print(f"  (no price configured for: {', '.join(unpriced)})")
     print(f"{'='*60}")
 
     return state
