@@ -608,6 +608,11 @@ def draw_graph(output_path=None):
 
 # ─── CLI ─────────────────────────────────────────────────────────────────────
 
+# POSIX env-var name: [A-Za-z_][A-Za-z0-9_]*. ASCII-only — see PR #1
+# follow-up for the Unicode-vs-ASCII fix.
+_POSIX_ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
 def _load_env_file_if_present():
     """Load ~/.config/agent-tool-llm-proofreader/env into os.environ if OPENROUTER_API_KEY is unset.
 
@@ -645,12 +650,8 @@ def _load_env_file_if_present():
             continue
         k, _, v = line.partition("=")
         k = k.strip()
-        # POSIX env-var name: [A-Za-z_][A-Za-z0-9_]*. Skip anything else
-        # (catches lines like `MY KEY=value` that would otherwise set a
-        # space-containing name unusable by subprocesses).
-        if not k or not (k[0].isalpha() or k[0] == "_") or not all(
-            c.isalnum() or c == "_" for c in k
-        ):
+        # POSIX env-var name (ASCII only). Skip anything else.
+        if not _POSIX_ENV_NAME.match(k):
             continue
         if k in os.environ:
             # Don't clobber pre-set env vars — caller's shell wins.

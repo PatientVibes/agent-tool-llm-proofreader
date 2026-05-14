@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.1 — 2026-05-14
+
+### Fixed
+
+- **POSIX-correct ASCII guard for env-loader.** `_load_env_file_if_present` in both `proofreader.py` and `proofreader_graph.py` was using Unicode-aware `str.isalpha()` / `str.isalnum()` to validate env-var names. Non-ASCII names like `MYé=value` passed the guard and got exported into `os.environ` despite POSIX requiring ASCII-only identifiers. Replaced with a module-level compiled regex `^[A-Za-z_][A-Za-z0-9_]*$`. Backport of the Codex P3 finding from the 2026-05-14 `/ship` dogfood (PR #1).
+
+### Added
+
+- **First pytest suite on this repo.** New `tests/conftest.py` + `tests/test_env_loader.py` with 6 cases parametrized across both env-loader call sites (12 total): non-ASCII identifier rejection (Codex case), pre-existing env-var no-clobber, single-pair quote strip, inline-comment literal, first-wins on duplicate keys, `export K=value` prefix strip. Run with `uv run --group dev pytest tests/ -v`.
+- **`[dependency-groups]` table in `pyproject.toml`** (PEP 735) with `dev = ["pytest>=8,<9"]`.
+
 ## 0.1.0 — 2026-05-09
 
 Initial release. Migrated from `C:/Users/chris/OneDrive/Documents/Reading/tools/llm_proofreader.py`, `llm_proofreader_graph.py`, `crop_flagged_blocks.py`, `reinsert_blocks.py`, `split_and_process.py`, plus the `proofreader_memory.json` and `fixes/` accumulated state, per `https://github.com/PatientVibes/ai-agents/blob/master/docs/superpowers/specs/2026-05-09-kindle-pipeline-tool-migration-design.md`.

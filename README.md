@@ -59,3 +59,14 @@ Override the state root via `AGENT_TOOL_PROOFREADER_STATE_DIR` env var or `--sta
 ## Origin
 
 Migrated from `C:/Users/chris/OneDrive/Documents/Reading/tools/` on 2026-05-09. See [the migration spec](https://github.com/PatientVibes/ai-agents/blob/master/docs/superpowers/specs/2026-05-09-kindle-pipeline-tool-migration-design.md) and `CHANGELOG.md` for the migration record.
+
+## Development
+
+Install the dev group and run tests:
+
+```bash
+uv sync --group dev
+uv run --group dev pytest tests/ -v
+```
+
+The dev group is declared via PEP 735 `[dependency-groups]` and brings in `pytest`. Tests are isolated from your real state dir via an autouse `conftest.py` fixture that sets `AGENT_TOOL_PROOFREADER_STATE_DIR` to a per-test `tmp_path`.
