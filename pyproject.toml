@@ -1,6 +1,6 @@
 [project]
 name = "agent-tool-llm-proofreader"
-version = "0.1.0"
+version = "0.1.1"
 description = "LLM-powered OCR proofreading agent. Deterministic pre-pass + langchain-openai verifier (via OpenRouter)."
 authors = [{ name = "Chris Moore", email = "chris.paul.moore@gmail.com" }]
 requires-python = ">=3.11"
@@ -22,6 +22,9 @@ llm-proofreader-graph = "llm_proofreader.proofreader_graph:main"
 crop-flagged-blocks = "llm_proofreader.crop_flagged_blocks:main"
 reinsert-blocks = "llm_proofreader.reinsert_blocks:main"
 split-and-process = "llm_proofreader.split_and_process:main"
+
+[dependency-groups]
+dev = ["pytest>=8,<9"]
 
 [build-system]
 requires = ["hatchling"]
