@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.2.0 — 2026-05-14
+
+### Added
+
+- **`agent-tool-token-tracker` adoption** for per-source LLM usage rollup + cost estimation. End-of-run output gains a "Token usage" block showing per-source call counts + token totals (e.g., `proofread: 47 calls`, `verify: 12 calls`) and a "Cost estimate (USD)" block using a hardcoded `PRICING` dict (initially seeded for `google/gemini-2.5-pro`). The JSON report (`*_proofread_report.json`) gains `token_usage` (= `tracker.totals()`) and `cost_estimate_usd` (= `tracker.cost_estimate(PRICING)`) keys.
+- New runtime dependency: `agent-tool-token-tracker @ git+https://github.com/PatientVibes/agent-tool-token-tracker.git`.
+- **Test coverage for token tracking** — new `tests/test_token_tracking.py` with 5 unit tests against stubbed `langchain-core` AIMessage shapes (no live OpenRouter calls).
+
+### Removed
+
+- **Hand-rolled metrics helpers** — `extract_openrouter_metrics`, `extract_ollama_metrics` (backward-compat alias for dead Ollama path), `_LAST_CALL_METRICS` module-level list, `format_metrics`. All replaced by `TokenTracker` per [[feedback-toolbox-rework-strategy]] (direct rewrite, no adapter).
+- **Graph variant `state.llm_metrics`** — the per-event list (with caller-supplied wall-clock seconds) and the JSONL persistence of those events (`metrics_<hash>.jsonl` under `graph_checkpoint_dir`). The graph variant now reads totals from `state.tracker` instead, matching the procedural variant's end-of-run block. Wall-clock per-call timing and the JSONL artifact were dropped; if either becomes friction we'll reintroduce them via TokenTracker extensions.
+
+### Limitations
+
+- `PRICING` is a hardcoded constant in `proofreader.py` and will drift as OpenRouter changes its pricing. End-of-run output notes any models that lack a price entry. Externalization to a config file is YAGNI for now — file a follow-up if drift becomes friction.
+
 ## 0.1.1 — 2026-05-14
 
 ### Fixed

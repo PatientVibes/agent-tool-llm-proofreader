@@ -1,10 +1,11 @@
 [project]
 name = "agent-tool-llm-proofreader"
-version = "0.1.1"
+version = "0.2.0"
 description = "LLM-powered OCR proofreading agent. Deterministic pre-pass + langchain-openai verifier (via OpenRouter)."
 authors = [{ name = "Chris Moore", email = "chris.paul.moore@gmail.com" }]
 requires-python = ">=3.11"
 dependencies = [
+    "agent-tool-token-tracker @ git+https://github.com/PatientVibes/agent-tool-token-tracker.git@d16943fdb0516f386ac798e1527526775ef52af1",
     "langchain-core>=0.3,<1",
     "langchain-openai>=0.2,<1",
     "langgraph>=0.2,<1",
@@ -29,6 +30,9 @@ dev = ["pytest>=8,<9"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/llm_proofreader"]
