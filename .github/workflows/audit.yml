@@ -34,7 +34,7 @@ jobs:
       - name: Install repo-doc-gov from v0.1.0 tag
         run: |
           uv tool install \
-            "agent-harness-repo-doc-governance @ git+https://github.com/PatientVibes/agent-harness-repo-doc-governance@v0.1.0"
+            "agent-harness-repo-doc-governance @ git+https://github.com/PatientVibes/agent-harness-repo-doc-governance@v0.1.1"
 
       - name: Run audit (--fail-on high)
         # `set -o pipefail` so the audit's non-zero exit propagates
