@@ -1,0 +1,60 @@
+name: audit
+
+# `repo-doc-gov audit` gate. Installs the harness from the v0.1.0 git tag
+# (no Python deps from this repo needed — audit is read-only) and runs it
+# against the checked-out tree. Fails the merge on any High or Blocker
+# drift finding. Lower-severity findings are surfaced in the artifact but
+# don't gate.
+#
+# Runs on a repo-scoped self-hosted runner on gh-runner.mshome.net.
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: [self-hosted, repo-doc-gov]
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Install repo-doc-gov from v0.1.0 tag
+        run: |
+          uv tool install \
+            "agent-harness-repo-doc-governance @ git+https://github.com/PatientVibes/agent-harness-repo-doc-governance@v0.1.0"
+
+      - name: Run audit (--fail-on high)
+        # `set -o pipefail` so the audit's non-zero exit propagates
+        # through `| tee` — without it, --fail-on high silently no-ops.
+        shell: bash
+        run: |
+          set -o pipefail
+          ~/.local/bin/repo-doc-gov audit \
+            --repo . \
+            --fail-on high \
+            --trace .audit-trace.jsonl \
+            | tee audit-report.json
+
+      - name: Upload audit artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-${{ github.run_id }}
+          path: |
+            audit-report.json
+            .audit-trace.jsonl
+          if-no-files-found: warn
+          retention-days: 14
